@@ -2,6 +2,7 @@
 #include <fstream>
 #include <string>
 #include <vector>
+#include <algorithm>
 
 using namespace std;
 struct Problem {
@@ -11,6 +12,7 @@ struct Problem {
 struct Doctor {
     string id_doctor;
     string speciality;
+    bool visited = false;
 };
 
 int main()
@@ -34,19 +36,18 @@ int main()
         inFile >> dr.id_doctor;
         inFile >> dr.speciality;
     }
-    bool ok;
     for (const Problem& pb : p)
     {
-        ok = false;
-        for (const Doctor& dr : d)
-        {
-            if (pb.speciality == dr.speciality)
-                ok = true;
-        }
-        if(ok)
-            cout << pb.id_problem << " " << "Acceptat" << '\n';
-        else
-            cout << pb.id_problem << " " << "Respins" << '\n';
+       
+            auto ans = find_if(d.begin(), d.end(), [=](Doctor& dr) {
+                return dr.visited == false && pb.speciality == dr.speciality;
+                });
+            if (ans != d.end()) {
+                ans->visited = true;
+                cout << ans->id_doctor<<" "<< pb.id_problem << '\n';
+            }
+
+     
     }
     inFile.close();
     return 0;
